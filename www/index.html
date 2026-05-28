@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetroPlayer</title>
+    <!-- Tailwind CSS para un diseño rápido y limpio -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Iconos Lucide para los botones de control -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-zinc-950 text-zinc-50 flex flex-col h-screen justify-between p-6 font-sans select-none">
+
+    <!-- CABECERA -->
+    <header class="text-center py-4">
+        <h1 class="text-xl font-bold tracking-wider text-emerald-400">RETRO PLAYER</h1>
+        <p class="text-xs text-zinc-400">Tu música local</p>
+    </header>
+
+    <!-- SECCIÓN CENTRAL: CARÁTULA Y DETALLES -->
+    <main class="flex flex-col items-center justify-center my-auto gap-6">
+        <!-- Contenedor del Disco (Gira si se reproduce) -->
+        <div id="album-art-container" class="w-64 h-64 bg-zinc-800 rounded-full flex items-center justify-center shadow-2xl border-4 border-zinc-700 transition-transform duration-1000 ease-linear">
+            <i data-lucide="music" class="w-20 h-20 text-zinc-600"></i>
+        </div>
+
+        <!-- Info de la Canción -->
+        <div class="text-center w-full px-4">
+            <h2 id="track-title" class="text-lg font-semibold truncate">Ninguna canción seleccionada</h2>
+            <p id="track-artist" class="text-sm text-zinc-400 truncate">Selecciona un archivo abajo</p>
+        </div>
+    </main>
+
+    <!-- CONTROLADOR, PROGRESO Y BOTÓN DE CARGA -->
+    <footer class="w-full flex flex-col gap-6 mb-4">
+        <!-- Barra de Progreso -->
+        <div class="w-full flex items-center gap-3">
+            <span id="current-time" class="text-xs text-zinc-500 w-10 text-right">0:00</span>
+            <input id="progress-bar" type="range" value="0" class="w-full h-1 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+            <span id="total-time" class="text-xs text-zinc-500 w-10">0:00</span>
+        </div>
+
+        <!-- Controles de Reproducción -->
+        <div class="flex items-center justify-center gap-8">
+            <button id="btn-prev" class="text-zinc-400 hover:text-white transition"><i data-lucide="skip-back" class="w-7 h-7"></i></button>
+            <button id="btn-play-pause" class="bg-emerald-400 text-zinc-950 p-4 rounded-full hover:scale-105 transition shadow-lg flex items-center justify-center">
+                <i id="play-icon" data-lucide="play" class="w-8 h-8 fill-zinc-950"></i>
+            </button>
+            <button id="btn-next" class="text-zinc-400 hover:text-white transition"><i data-lucide="skip-forward" class="w-7 h-7"></i></button>
+        </div>
+
+        <!-- Botón para simular la carga de música en el móvil -->
+        <div class="mt-2">
+            <label class="w-full flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 py-3 rounded-xl cursor-pointer transition text-sm text-zinc-300">
+                <i data-lucide="folder-open" class="w-4 h-4"></i>
+                Cargar archivos .mp3
+                <input type="file" id="file-input" multiple accept="audio/*" class="hidden">
+            </label>
+        </div>
+    </footer>
+
+    <!-- Elemento de audio invisible -->
+    <audio id="audio-player"></audio>
+
+    <!-- LÓGICA DE JAVASCRIPT -->
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // Elementos del DOM
+        const audio = document.getElementById('audio-player');
+        const fileInput = document.getElementById('file-input');
+        const btnPlayPause = document.getElementById('btn-play-pause');
+        const playIcon = document.getElementById('play-icon');
+        const trackTitle = document.getElementById('track-title');
+        const trackArtist = document.getElementById('track-artist');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeLabel = document.getElementById('current-time');
+        const totalTimeLabel = document.getElementById('total-time');
+        const albumArtContainer = document.getElementById('album-art-container');
+
+        let playlist = [];
+        let currentIndex = 0;
+
+        // Escuchar cuando el usuario carga canciones
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            playlist = files.map(file => ({
+                name: file.name.replace(/\.[^/.]+$/, ""), // Quita la extensión (.mp3)
+                url: URL.createObjectURL(file)
+            }));
+
+            currentIndex = 0;
+            loadTrack(currentIndex);
+            playTrack();
+        });
+
+        // Cargar canción en el reproductor
+        function loadTrack(index) {
+            if (playlist.length === 0) return;
+            audio.src = playlist[index].url;
+            trackTitle.textContent = playlist[index].name;
+            trackArtist.textContent = "Archivo Local";
+            progressBar.value = 0;
+        }
+
+        // Alternar Play / Pause
+        function togglePlay() {
+            if (playlist.length === 0) return;
+            if (audio.paused) {
+                playTrack();
+            } else {
+                pauseTrack();
+            }
+        }
+
+        function playTrack() {
+            audio.play();
+            btnPlayPause.innerHTML = '<i data-lucide="pause" class="w-8 h-8 fill-zinc-950"></i>';
+            albumArtContainer.classList.add('animate-spin');
+            albumArtContainer.style.animationDuration = '8s';
+            lucide.createIcons();
+        }
+
+        function pauseTrack() {
+            audio.pause();
+            btnPlayPause.innerHTML = '<i data-lucide="play" class="w-8 h-8 fill-zinc-950"></i>';
+            albumArtContainer.classList.remove('animate-spin');
+            lucide.createIcons();
+        }
+
+        // Controladores de Eventos de Botones
+        btnPlayPause.addEventListener('click', togglePlay);
+        
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            currentIndex = (currentIndex + 1) % playlist.length;
+            loadTrack(currentIndex);
+            playTrack();
+        });
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (playlist.length === 0) return;
+            currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+            loadTrack(currentIndex);
+            playTrack();
+        });
+
+        // Actualizar barra de progreso del tiempo
+        audio.addEventListener('timeupdate', () => {
+            if (isNaN(audio.duration)) return;
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.value = progress;
+            
+            // Formatear minutos y segundos
+            currentTimeLabel.textContent = formatTime(audio.currentTime);
+            totalTimeLabel.textContent = formatTime(audio.duration);
+        });
+
+        // Permitir adelantar/atrasar arrastrando la barra
+        progressBar.addEventListener('input', () => {
+            const seekTime = (progressBar.value / 100) * audio.duration;
+            audio.currentTime = seekTime;
+        });
+
+        // Pasar a la siguiente canción automáticamente al terminar
+        audio.addEventListener('ended', () => {
+            document.getElementById('btn-next').click();
+        });
+
+        function formatTime(secs) {
+            const minutes = Math.floor(secs / 60);
+            const seconds = Math.floor(secs % 60);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    </script>
+</body>
+</html>
