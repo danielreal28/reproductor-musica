@@ -4,12 +4,181 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retro Player - zonatrialapp</title>
-  <link rel="stylesheet" href="style.css">
+  
+  <!-- ==========================================================================
+     CÓDIGO CSS INTEGRADO (Estilos y Skins por DanielReal)
+     ========================================================================== -->
+  <style>
+    /* Configuración de los dos temas de color */
+    :root, body.theme-retro {
+      --color-bg: #0d0e12;
+      --color-sidebar: #13151c;
+      --color-card: #1e2026;
+      --color-primary: #00e676; /* Verde menta */
+      --color-text: #ffffff;
+      --color-text-muted: #a0a5b5;
+    }
+
+    body.theme-neon {
+      --color-bg: #120136; /* Morado noche */
+      --color-sidebar: #03001e; /* Azul profundo */
+      --color-card: #200140; /* Morado intermedio */
+      --color-primary: #ff007f; /* Rosa fucsia neón */
+      --color-text: #ffffff;
+      --color-text-muted: #00f0ff; /* Azul cian */
+    }
+
+    /* Estilos globales de la interfaz */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      overflow-hidden;
+      transition: background-color 0.4s ease;
+    }
+
+    .app-container {
+      display: table;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Menú Lateral */
+    .sidebar {
+      display: table-cell;
+      width: 260px;
+      background-color: var(--color-sidebar);
+      padding: 20px;
+      vertical-align: top;
+      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      transition: background-color 0.4s ease;
+    }
+
+    .sidebar-header h2 {
+      font-size: 16pt;
+      color: var(--color-primary);
+      margin-bottom: 25px;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-section {
+      margin-bottom: 30px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 10pt;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .file-list {
+      list-style: none;
+      font-size: 10pt;
+    }
+
+    .empty-list {
+      color: rgba(255, 255, 255, 0.3);
+      font-style: italic;
+    }
+
+    /* Selector de Skins */
+    .btn-skin {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 10pt;
+      cursor: pointer;
+      color: #fff;
+      transition: transform 0.2s;
+    }
+
+    .btn-skin:active { transform: scale(0.97); }
+    .btn-retro { background-color: #00b453; }
+    .btn-neon { background-color: #ff007f; }
+
+    /* Contenedor del Reproductor */
+    .main-player {
+      display: table-cell;
+      padding: 40px;
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    .player-header { margin-bottom: 30px; }
+    .logo-title {
+      color: var(--color-primary);
+      font-size: 22pt;
+      letter-spacing: 2px;
+      font-weight: 800;
+      transition: color 0.4s ease;
+    }
+    .subtitle { color: var(--color-text-muted); font-size: 11pt; margin-top: 4px; }
+
+    /* Disco Visual */
+    .disc-container { margin: 30px auto; width: 200px; height: 200px; }
+    .audio-disc {
+      width: 100%; height: 100%;
+      background-color: var(--color-card);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: background-color 0.4s ease;
+    }
+    .disc-center {
+      width: 50px; height: 50px;
+      background-color: var(--color-bg);
+      border-radius: 50%;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      border: 4px solid var(--color-primary);
+      transition: all 0.4s ease;
+    }
+
+    /* Info y Controles */
+    .track-info h3 { font-size: 13pt; margin-bottom: 4px; }
+    .track-info p { color: var(--color-text-muted); font-size: 10pt; }
+
+    .progress-container { width: 80%; max-width: 450px; margin: 25px auto; font-size: 9pt; color: var(--color-text-muted); }
+    .progress-bar { display: inline-block; width: 70%; height: 6px; background-color: rgba(255, 255, 255, 0.1); border-radius: 3px; margin: 0 10px; vertical-align: middle; }
+    .progress-fill { width: 35%; height: 100%; background-color: var(--color-primary); border-radius: 3px; transition: background-color 0.4s ease; }
+
+    .player-controls { margin: 20px 0; }
+    .control-btn { background: none; border: none; cursor: pointer; margin: 0 15px; vertical-align: middle; }
+    .control-btn svg { width: 28px; height: 28px; fill: #ffffff; }
+
+    .btn-play-pause {
+      background-color: var(--color-primary);
+      width: 56px; height: 56px; border-radius: 50%;
+      transition: background-color 0.4s ease, transform 0.2s;
+    }
+    .btn-play-pause svg { width: 26px; height: 26px; fill: #000000; margin-left: 2px; }
+
+    .upload-area { margin-top: 35px; }
+    .btn-upload {
+      background-color: rgba(255, 255, 255, 0.07);
+      border: none; color: #ffffff; padding: 14px 28px;
+      font-size: 10pt; border-radius: 25px; cursor: pointer; font-weight: 600;
+    }
+
+    .app-footer { margin-top: 40px; font-size: 8pt; color: rgba(255, 255, 255, 0.2); }
+  </style>
 </head>
 <body>
 
   <div class="app-container">
     
+    <!-- MENÚ LATERAL -->
     <div class="sidebar">
       <div class="sidebar-header">
         <h2>Menú</h2>
@@ -17,7 +186,7 @@
       
       <div class="sidebar-section">
         <h3>Mi Música</h3>
-        <ul id="lista-archivos" class="file-list">
+        <ul class="file-list">
           <li class="empty-list">No hay archivos subidos</li>
         </ul>
       </div>
@@ -31,6 +200,7 @@
       </div>
     </div>
 
+    <!-- REPRODUCTOR CENTRAL -->
     <div class="main-player">
       <header class="player-header">
         <h1 class="logo-title">RETRO PLAYER</h1>
@@ -49,25 +219,15 @@
       </div>
 
       <div class="progress-container">
-        <span class="time-current">0:00</span>
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
-        </div>
-        <span class="time-total">0:41</span>
+        <span>0:00</span>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+        <span>0:41</span>
       </div>
 
       <div class="player-controls">
-        <button class="control-btn btn-prev">
-          <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-        </button>
-        
-        <button onclick="togglePlay()" class="control-btn btn-play-pause" id="play-trigger">
-          <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        
-        <button class="control-btn btn-next">
-          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6zm9-12v12h2V6z"/></svg>
-        </button>
+        <button class="control-btn"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+        <button onclick="togglePlay()" class="control-btn btn-play-pause"><svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="control-btn"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6zm9-12v12h2V6z"/></svg></button>
       </div>
 
       <div class="upload-area">
@@ -81,6 +241,39 @@
 
   </div>
 
-  <script src="app.js"></script>
+  <!-- ==========================================================================
+     CÓDIGO JAVASCRIPT INTEGRADO (Lógica por DanielReal)
+     ========================================================================== -->
+  <script>
+    let estaReproduciendo = false;
+
+    function cambiarSkin(nombreTema) {
+      document.body.classList.remove('theme-retro', 'theme-neon');
+      document.body.classList.add('theme-' + nombreTema);
+      localStorage.setItem('danielreal-skin-preference', nombreTema);
+    }
+
+    function togglePlay() {
+      const iconoPlay = document.getElementById('icon-play');
+      estaReproduciendo = !estaReproduciendo;
+
+      if (estaReproduciendo) {
+        iconoPlay.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        document.getElementById('track-name').innerText = "AUD-20260527-WA0042.mp3 (Reproduciendo)";
+      } else {
+        iconoPlay.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        document.getElementById('track-name').innerText = "AUD-20260527-WA0042.mp3 (Pausado)";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const temaPersistente = localStorage.getItem('danielreal-skin-preference');
+      if (temaPersistente) {
+        cambiarSkin(temaPersistente);
+      } else {
+        cambiarSkin('retro');
+      }
+    });
+  </script>
 </body>
 </html>
