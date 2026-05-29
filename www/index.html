@@ -34,7 +34,6 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
-    /* AJUSTE CLAVE: Evitamos el scroll en toda la app */
     body {
       background-color: var(--color-bg);
       color: var(--color-text);
@@ -93,25 +92,30 @@
 
     .sidebar-overlay.active { display: block; }
     .sidebar-header h2 { font-size: 16pt; color: var(--color-primary); margin-bottom: 25px; letter-spacing: 1px; }
-    .sidebar-section { margin-bottom: 30px; }
+    .sidebar-section { margin-bottom: 25px; }
     .sidebar-section h3 { font-size: 10pt; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 12px; }
-    .file-list { list-style: none; font-size: 10pt; max-height: 200px; overflow-y: auto; }
-    .file-item { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--color-text); font-size: 9pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+    
+    /* Lista de reproducción interna */
+    .file-list { list-style: none; font-size: 10pt; max-height: 220px; overflow-y: auto; }
+    .file-item { padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--color-text); font-size: 9pt; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-radius: 4px; }
+    .file-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+    .file-item.active-track { color: var(--color-primary); font-weight: bold; background-color: rgba(0, 230, 118, 0.08); }
+    body.theme-neon .file-item.active-track { background-color: rgba(255, 0, 127, 0.08); }
     .empty-list { color: rgba(255, 255, 255, 0.3); font-style: italic; }
 
     .btn-skin { display: block; width: 100%; padding: 10px; margin-bottom: 10px; border: none; border-radius: 6px; font-weight: bold; font-size: 10pt; cursor: pointer; color: #fff; }
     .btn-retro { background-color: #00b453; }
     .btn-neon { background-color: #ff007f; }
 
-    /* REPRODUCTOR CENTRAL INTEGRADO CON DISTRIBUCIÓN VERTICAL */
+    /* REPRODUCTOR CENTRAL */
     .main-player {
       width: 100%;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Distribuye los elementos de arriba a abajo */
+      justify-content: space-between;
       align-items: center;
-      padding: 25px 20px 15px 20px; /* Margen inferior reducido para cuidar la firma */
+      padding: 25px 20px 15px 20px;
       text-align: center;
     }
 
@@ -119,53 +123,65 @@
     .logo-title { color: var(--color-primary); font-size: 22pt; letter-spacing: 2px; font-weight: 800; }
     .subtitle { color: var(--color-text-muted); font-size: 10pt; }
 
-    /* AJUSTE CLAVE: El contenedor del disco aprovecha el espacio disponible sin empujar el resto */
-    .disc-container { 
-      flex-grow: 1; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      min-height: 140px; 
-    }
-
+    .disc-container { flex-grow: 1; display: flex; align-items: center; justify-content: center; min-height: 130px; }
     .audio-disc {
-      width: 180px; 
-      height: 180px; 
-      background-color: var(--color-card); 
-      border-radius: 50%; 
-      position: relative;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      transition: background-color 0.4s ease;
+      width: 170px; height: 170px; background-color: var(--color-card); border-radius: 50%; position: relative;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; transition: background-color 0.4s ease;
     }
 
     .audio-disc.playing { animation: rotarDisco 8s linear infinite; }
     @keyframes rotarDisco { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .disc-center { width: 50px; height: 50px; background-color: var(--color-bg); border-radius: 50%; border: 4px solid var(--color-primary); }
+    .disc-center { width: 45px; height: 45px; background-color: var(--color-bg); border-radius: 50%; border: 4px solid var(--color-primary); }
 
     .track-info { width: 90%; margin-bottom: 5px; }
     .track-info h3 { font-size: 12pt; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .track-info p { color: var(--color-text-muted); font-size: 9pt; }
 
-    .progress-container { display: flex; width: 90%; max-width: 380px; font-size: 9pt; color: var(--color-text-muted); justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .progress-bar { flex-grow: 1; height: 5px; background-color: rgba(255, 255, 255, 0.1); border-radius: 3px; margin: 0 10px; position: relative; }
+    /* CONTROLES DE MODO (REPETIR, ALEATORIO) */
+    .modes-container {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin-bottom: 5px;
+    }
+    .mode-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,0.4);
+      font-size: 9pt;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .mode-btn svg { width: 18px; height: 18px; fill: rgba(255,255,255,0.4); }
+    .mode-btn.active-mode {
+      color: var(--color-primary);
+      background-color: rgba(255,255,255,0.05);
+    }
+    .mode-btn.active-mode svg { fill: var(--color-primary); }
+
+    .progress-container { display: flex; width: 90%; max-width: 380px; font-size: 9pt; color: var(--color-text-muted); justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .progress-bar { flex-grow: 1; height: 5px; background-color: rgba(255, 255, 255, 0.1); border-radius: 3px; margin: 0 10px; position: relative; cursor: pointer; }
     .progress-fill { width: 0%; height: 100%; background-color: var(--color-primary); border-radius: 3px; }
 
-    .player-controls { display: flex; align-items: center; margin-bottom: 15px; }
+    .player-controls { display: flex; align-items: center; margin-bottom: 12px; }
     .control-btn { background: none; border: none; cursor: pointer; margin: 0 12px; }
-    .control-btn svg { width: 26px; height: 26px; fill: #ffffff; }
+    .control-btn svg { width: 28px; height: 28px; fill: #ffffff; }
+    .control-btn:active svg { fill: var(--color-primary); }
 
     .btn-play-pause { background-color: var(--color-primary); width: 54px; height: 54px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
     .btn-play-pause svg { width: 24px; height: 24px; fill: #000000; }
 
-    .upload-area { margin-bottom: 15px; }
+    .upload-area { margin-bottom: 12px; }
     .btn-upload { background-color: rgba(255, 255, 255, 0.08); border: none; color: #ffffff; padding: 12px 26px; font-size: 9pt; border-radius: 25px; cursor: pointer; font-weight: 600; }
 
     #hidden-file-input { display: none; }
 
-    /* FIRMA SIEMPRE VISIBLE EN EL BORDE INFERIOR */
     .app-footer { 
       font-size: 7.5pt; 
       color: rgba(255, 255, 255, 0.25); 
@@ -223,21 +239,38 @@
       <p id="track-artist">Archivo Local</p>
     </div>
 
+    <div class="modes-container">
+      <button id="btn-shuffle" class="mode-btn" onclick="setModo('aleatorio')">
+        <svg viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+        Aleatorio
+      </button>
+      <button id="btn-repeat" class="mode-btn" onclick="setModo('repetir')">
+        <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v3h12v-6h-2v4z"/></svg>
+        Repetir
+      </button>
+    </div>
+
     <div class="progress-container">
       <span id="current-time">0:00</span>
-      <div class="progress-bar"><div class="progress-fill" id="progress-indicator"></div></div>
+      <div class="progress-bar" onclick="adelantarCancion(event)"><div class="progress-fill" id="progress-indicator"></div></div>
       <span id="total-time">0:00</span>
     </div>
 
     <div class="player-controls">
-      <button class="control-btn"><svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-      <button onclick="togglePlay()" class="control-btn btn-play-pause"><svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
-      <button class="control-btn"><svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6zm9-12v12h2V6z"/></svg></button>
+      <button class="control-btn" onclick="cancionAnterior()">
+        <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      <button onclick="togglePlay()" class="control-btn btn-play-pause">
+        <svg id="icon-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="control-btn" onclick="proximaCancion()">
+        <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6zm9-12v12h2V6z"/></svg>
+      </button>
     </div>
 
     <div class="upload-area">
       <button class="btn-upload" onclick="triggerFileInput()">Cargar archivos .mp3</button>
-      <input type="file" id="hidden-file-input" accept="audio/mp3, audio/*" onchange="cargarMusica(event)">
+      <input type="file" id="hidden-file-input" accept="audio/mp3, audio/*" multiple onchange="cargarMusica(event)">
     </div>
 
     <footer class="app-footer">
@@ -256,6 +289,11 @@
     const lblCurrentTime = document.getElementById('current-time');
     const lblTotalTime = document.getElementById('total-time');
 
+    // Estado interno del reproductor
+    let playlist = []; // Arreglo que guardará los objetos de archivos cargados
+    let indiceActual = -1;
+    let modoReproduccion = 'normal'; // 'normal', 'repetir', 'aleatorio'
+
     function toggleMenu() {
       document.getElementById('sidebar-menu').classList.toggle('active');
       document.getElementById('menu-overlay').classList.toggle('active');
@@ -271,36 +309,97 @@
       document.getElementById('hidden-file-input').click();
     }
 
+    // CARGAR MÚLTIPLES ARCHIVOS SIMULTÁNEAMENTE
     function cargarMusica(event) {
-      const archivo = event.target.files[0];
-      if (!archivo) return;
+      const archivos = event.target.files;
+      if (archivos.length === 0) return;
 
-      const archivoURL = URL.createObjectURL(archivo);
-      audio.src = archivoURL;
-      trackName.innerText = archivo.name;
+      const primerCarga = (playlist.length === 0);
 
-      agregarAHistorialVisual(archivo.name);
+      // Recorremos cada archivo seleccionado por el usuario
+      for (let i = 0; i < archivos.length; i++) {
+        const archivo = archivos[i];
+        
+        // Creamos la estructura interna del track
+        const nuevoTrack = {
+          nombre: archivo.name,
+          url: URL.createObjectURL(archivo)
+        };
+
+        playlist.push(nuevoTrack);
+        agregarAHistorialVisual(nuevoTrack.nombre, playlist.length - 1);
+      }
+
+      // Si el reproductor estaba vacío, empieza a sonar la primera de golpe
+      if (primerCarga) {
+        seleccionarTrack(0);
+      }
+    }
+
+    function agregarAHistorialVisual(nombre, indice) {
+      const lista = document.getElementById('playlist-files');
+      const msgVacio = document.getElementById('empty-msg');
+      if (msgVacio) msgVacio.remove();
+
+      const nuevoItem = document.createElement('li');
+      nuevoItem.className = 'file-item';
+      nuevoItem.id = 'track-item-' + indice;
+      nuevoItem.innerText = "🎵 " + nombre;
+      
+      // Si el usuario toca la canción directamente en la lista, se reproduce
+      nuevoItem.onclick = () => {
+        seleccionarTrack(indice);
+        toggleMenu(); // Cierra el menú al elegir
+      };
+
+      lista.appendChild(nuevoItem);
+    }
+
+    // DISPARAR UNA CANCIÓN DETERMINADA
+    function seleccionarTrack(indice) {
+      if (indice < 0 || indice >= playlist.length) return;
+      
+      indiceActual = indice;
+      const track = playlist[indiceActual];
+      
+      audio.src = track.url;
+      trackName.innerText = track.nombre;
+
+      // Resaltar la canción en el menú lateral
+      document.querySelectorAll('.file-item').forEach(item => item.classList.remove('active-track'));
+      const itemVisual = document.getElementById('track-item-' + indiceActual);
+      if (itemVisual) itemVisual.classList.add('active-track');
 
       audio.play();
       playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
       disc.classList.add('playing');
     }
 
-    function agregarAHistorialVisual(nombre) {
-      const lista = document.getElementById('playlist-files');
-      const msgVacio = document.getElementById('empty-msg');
-      
-      if (msgVacio) msgVacio.remove();
+    // BOTONES SIGUIENTE Y ATRÁS REALES
+    function proximaCancion() {
+      if (playlist.length === 0) return;
 
-      const nuevoItem = document.createElement('li');
-      nuevoItem.className = 'file-item';
-      nuevoItem.innerText = "🎵 " + nombre;
-      lista.appendChild(nuevoItem);
+      if (modoReproduccion === 'aleatorio') {
+        let indiceAzar = Math.floor(Math.random() * playlist.length);
+        seleccionarTrack(indiceAzar);
+      } else {
+        let siguiente = indiceActual + 1;
+        if (siguiente >= playlist.length) siguiente = 0; // Vuelve al inicio
+        seleccionarTrack(siguiente);
+      }
+    }
+
+    function cancionAnterior() {
+      if (playlist.length === 0) return;
+
+      let anterior = indiceActual - 1;
+      if (anterior < 0) anterior = playlist.length - 1; // Salta a la última
+      seleccionarTrack(anterior);
     }
 
     function togglePlay() {
-      if (!audio.src) {
-        alert("Primero carga un archivo .mp3 usando el botón inferior.");
+      if (playlist.length === 0) {
+        alert("Primero carga archivos .mp3 usando el botón inferior.");
         return;
       }
 
@@ -311,10 +410,44 @@
       } else {
         audio.pause();
         playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+        disc.classList.remove('remove');
         disc.classList.remove('playing');
       }
     }
 
+    // CAMBIAR MODOS DE REPRODUCCIÓN (REPETIR / ALEATORIO)
+    function setModo(nuevoModo) {
+      const btnShuffle = document.getElementById('btn-shuffle');
+      const btnRepeat = document.getElementById('btn-repeat');
+
+      if (modoReproduccion === nuevoModo) {
+        // Si vuelves a presionar el modo activo, se desactiva regresando a normal
+        modoReproduccion = 'normal';
+        btnShuffle.classList.remove('active-mode');
+        btnRepeat.classList.remove('active-mode');
+      } else {
+        modoReproduccion = nuevoModo;
+        if (nuevoModo === 'aleatorio') {
+          btnShuffle.classList.add('active-mode');
+          btnRepeat.classList.remove('active-mode');
+        } else if (nuevoModo === 'repetir') {
+          btnRepeat.classList.add('active-mode');
+          btnShuffle.classList.remove('active-mode');
+        }
+      }
+    }
+
+    // DETECTAR CUANDO TERMINA LA CANCIÓN PARA EL SIGUIENTE PASO
+    audio.addEventListener('ended', () => {
+      if (modoReproduccion === 'repetir') {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        proximaCancion();
+      }
+    });
+
+    // ACTUALIZACIÓN DE BARRA DE TIEMPO
     audio.addEventListener('timeupdate', () => {
       if (!audio.duration) return;
       const porcentaje = (audio.currentTime / audio.duration) * 100;
@@ -330,6 +463,15 @@
       const mins = Math.floor(segundosTotales / 60);
       const segs = Math.floor(segundosTotales % 60);
       return mins + ":" + (segs < 10 ? '0' : '') + segs;
+    }
+
+    // Permitir hacer clic en la barra para adelantar o atrasar la canción manual
+    function adelantarCancion(e) {
+      if (!audio.duration) return;
+      const barra = e.currentTarget;
+      const clickX = e.offsetX;
+      const anchoTotal = barra.clientWidth;
+      audio.currentTime = (clickX / anchoTotal) * audio.duration;
     }
 
     document.addEventListener("DOMContentLoaded", () => {
