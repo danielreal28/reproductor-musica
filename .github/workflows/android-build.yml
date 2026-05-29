@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ main ] # Se ejecutará automáticamente cada vez que subas cambios a la rama main
+    branches: [ main ]
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        distribution: 'zulu'
+        distribution: 'temurin'
         java-version: '17'
 
     - name: Setup Android SDK
@@ -32,7 +32,8 @@ jobs:
 
     - name: Sync Capacitor Android
       run: |
-        npx cap sync android
+        # Llamamos al CLI oficial directamente para evitar errores de permisos en Linux
+        npx @capacitor/cli sync android
 
     - name: Build APK with Gradle
       run: |
